@@ -35,24 +35,28 @@ def fetch_batch_data(symbol, apikey, batch_size=1000, function="HISTORICAL_OPTIO
             'symbol': symbol,
             'apikey': apikey,
             'datatype': 'json',
-            'outputsize': 'full',
-            'start': start,
-            'limit': batch_size
+            'outputsize': 'full'
         }
         response = requests.get(base_url, params=params)
+        
+        # Verificar si la respuesta es '200 OK'
+        if response.status_code != 200:
+            console.print(f"[red]Error en la solicitud: {response.status_code} {response.reason}[/red]")
+            continue
+        
         data = response.json()
-
+        
         # Verificar si los datos son válidos
         if 'option' in data:
             all_data.extend(data['option'])
         else:
-            console.print(f"[red]Error al obtener datos: {data.get('Error Message', 'Unknown error')}[/red]")
+            console.print(f"[red]Error en la respuesta de datos: {data.get('Error Message', response.text)}[/red]")
 
     return all_data
 
 def main():
     symbol = 'IBM'
-    apikey = 'demo'  # Usa tu propia API Key de Alpha Vantage
+    apikey = os.getenv('ALPHA_VANTAGE_API_KEY', '1PZJ2AMWREX60DI1')  # Usa tu propia API Key de Alpha Vantage
     last_time = time.time()
 
     while True:
