@@ -2,23 +2,17 @@ from datetime import datetime
 import json
 import os
 import time
-
-# Configuración de Rich
 from rich.console import Console
 from rich.live import Live
 from rich.table import Table
 from rich.layout import Layout
-
-# Configuración de HDFS
 from hdfs import InsecureClient
 
-# Configuración de Kafka
 from kafka import KafkaConsumer
 
 console = Console()
 layout = Layout()
 
-# Configuración de HDFS
 HDFS_URL = 'http://localhost:9870'
 HDFS_DIR = '/user/data/ibm_options/'
 
@@ -73,7 +67,6 @@ def save_data(data, timestamp):
         except Exception as e:
             console.print(f"[red]Error al escribir en HDFS: {str(e)}[/red]")
     
-    # Fallback a almacenamiento local
     local_path = os.path.join(LOCAL_DIR, filename)
     with open(local_path, 'w', encoding='utf-8') as f:
         json.dump(data, f)
