@@ -23,7 +23,7 @@ producer = KafkaProducer(
 
 def fetch_batch_data(symbol, apikey, batch_size=1000, function="HISTORICAL_OPTIONS"):
     """Obtiene datos históricos por lotes desde la API de Alpha Vantage"""
-    base_url = 'https://www.alphavantage.co/query'
+    base_url = 'https://www.alphavantage.co/query?function=HISTORICAL_OPTIONS&symbol=IBM&date=2017-11-15&apikey=demo'
     all_data = []
     for start in range(0, batch_size, 100):
         params = {
@@ -41,8 +41,8 @@ def fetch_batch_data(symbol, apikey, batch_size=1000, function="HISTORICAL_OPTIO
         
         data = response.json()
         
-        if 'option' in data:
-            all_data.extend(data['option'])
+        if 'data' in data:
+            all_data.extend(data['data'])
         else:
             console.print(f"[red]Error en la respuesta de datos: {data.get('Error Message', response.text)}[/red]")
 

@@ -2,13 +2,14 @@ services:
   # Configuración del NameNode de Hadoop
   namenode:
     image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
-    container_name: hadoop-namenode
+    container_name: namenode
+    hostname: namenode
     environment:
       - CLUSTER_NAME=test-cluster
-      - CORE_CONF_fs_defaultFS=hdfs://hadoop-namenode:9000
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
     ports:
-      - "9870:9870"
-      - "9000:9000"  
+      - "9870:9870"  # Interfaz web de Hadoop
+      - "8020:8020" 
     volumes:
       - hadoop_namenode:/hadoop/dfs/name
     networks:
@@ -16,33 +17,30 @@ services:
     depends_on:
       - zookeeper
       - kafka
-
-
   # Configuración del DataNode de Hadoop
   datanode:
     image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
-    container_name: hadoop-datanode
+    container_name: datanode
+    hostname: datanode
     environment:
       - CLUSTER_NAME=test-cluster
-      - CORE_CONF_fs_defaultFS=hdfs://hadoop-namenode:9000
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
     ports:
-      - "9864:9864"
+      - "9864:9864"  
     volumes:
       - hadoop_datanode:/hadoop/dfs/data
     networks:
       - hadoop_network
     depends_on:
       - namenode
-
-
-  # Configuración de Zookeeper 
+  # Configuración de Zookeeper (para Kafka)
   zookeeper:
     image: wurstmeister/zookeeper:latest
     container_name: zookeeper
     environment:
       - ZOOKEEPER_CLIENT_PORT=2181
     ports:
-      - "2181:2181" 
+      - "2181:2181"  
     networks:
       - hadoop_network
 
@@ -58,32 +56,18 @@ services:
       - KAFKA_LISTENER_NAME_INTERNAL=INTERNAL
       - KAFKA_LISTENER_PORT_INTERNAL=9093
     ports:
-      - "9092:9092"  
+      - "9092:9092"  # Puerto Kafka
     networks:
       - hadoop_network
     depends_on:
       - zookeeper
 
-  # Configuración del container del Consumer
-  consumer:
-    image: python:3.10-slim  
-    container_name: consumer-container
-    networks:
-      - hadoop_network
-    volumes:
-      - ./consumer.py:/app/consumer.py
-    environment:
-      - KAFKA_BROKER=kafka:9092
-      - HADOOP_NAMENODE=hadoop-namenode:9870
-    command: [ "python", "/app/consumer.py" ]  
-    depends_on:
-      - kafka
-      - namenode
-
+# Volúmenes de datos de Hadoop
 volumes:
   hadoop_namenode:
   hadoop_datanode:
 
+# Redes
 networks:
   hadoop_network:
     driver: bridge
