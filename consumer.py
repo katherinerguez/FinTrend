@@ -16,7 +16,7 @@ HDFS_DIR = '/user/data/ibm_options/'
 
 
 def setup_hdfs():
-    """Configura la conexión HDFS y crea el directorio si no existe"""
+    # configurar HDFS
     try:
         client = InsecureClient(HDFS_URL, user='root')
         try:
@@ -38,7 +38,6 @@ os.makedirs(LOCAL_DIR, exist_ok=True)
 
 # Configurar HDFS
 hdfs_client = setup_hdfs()
-
 
 def save_data(data, timestamp):
     """Guarda los datos en HDFS o localmente"""
@@ -62,7 +61,7 @@ def save_data(data, timestamp):
 
 
 def generate_table(messages):
-    """Genera la tabla de mensajes y archivos"""
+    
     table = Table(title="IBM Options Data")
     table.add_column("Timestamp", justify="center", style="cyan")
     table.add_column("Number of Entries", justify="right", style="green")
