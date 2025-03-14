@@ -33,9 +33,10 @@
     	El análisis de datos es una disciplina que ha experimentado un notable crecimiento en todos los campos, así como en organizaciones y empresas, debido a la necesidad de contar con herramientas que analicen datos y que estos sirvan para la toma de decisiones eficaces y eficientes.  \\
     	Los datos han crecido de manera exponencial en las últimas décadas, lo que ha generado una serie de problemas, como el acceso a esa cantidad de datos, su extracción y almacenamiento. Por lo tanto, se introduce aquí la definición de \textit{Big Data}. \\
     \textit{Big data} se refiere a conjuntos de datos extremadamente grandes y complejos que no pueden gestionarse ni analizarse fácilmente con las herramientas tradicionales de procesamiento de datos.  \\
-    	Para abordar estos desafíos, se emplean diversas herramientas avanzadas como Hadoop y Apache Kafka. Hadoop es conocido por su capacidad de distribuir y procesar grandes conjuntos de datos a través de clústeres, facilitando el almacenamiento y la gestión eficiente de datos de gran volumen. Por otro lado, Apache Kafka es una plataforma de procesamiento de flujos que permite la transmisión y gestión de grandes volúmenes de datos de manera rápida y eficiente, garantizando que la información fluya de forma continua y sin interrupciones.\\
-    	Este trabajo no solo pretende abordar los desafíos asociados con la gestión de grandes volúmenes de datos, sino también demostrar su aplicación práctica a través de un análisis histórico de datos financieros, ofreciendo a analistas e inversores una comprensión profunda de los mercados financieros y respaldando estrategias de inversión informadas y efectivas.
+    	Este trabajo no solo pretende abordar los desafíos asociados con la gestión de grandes volúmenes de datos, sino también demostrar su aplicación práctica a través de un análisis histórico de datos financieros, ofreciendo a analistas e inversores una comprensión profunda de los mercados financieros y respaldando estrategias de inversión informadas y efectivas. Una de las grandes empresas tecnológicas de los Estados Unidos la cual es una de las que alberga más patentes es la IBM (International Business Machines Corporation). El análisis financiero se centrará alrededor de esta empresa.
     \end{flushleft}
+    \section{IBM}
+    International Business Machines Corporation (IBM) es una empresa tecnológica multinacional estadounidense. IBM fabrica y comercializa hardware y software para computadoras, y ofrece servicios de infraestructura, alojamiento de Internet, y consultoría en una amplia gama de áreas relacionadas con la informática, desde computadoras centrales hasta nanotecnología.
     \section{Ingesta de Datos}
     \subsection{API Alphavantage }
    \begin{flushleft}
@@ -127,14 +128,19 @@ def save_data(data, timestamp):
 			\includegraphics[width=12cm]{./hdfs}
 			\caption{Esta imagen muestra toda la data almacenada en HDFS.}
 			\label{fig:mi_imagen}
-		\end{figure}
-	\begin{figure}[h]
-		\centering
+		
+	\end{figure}
+			\begin{figure}[h]
 		\includegraphics[width=12cm]{./monitoreo}
 		\caption{Esta imagen muestra en consola que la data se guardó correctamente.}
 		\label{fig:mi_imagen}
 	\end{figure}
 	
+	\section{Procesamiento de los Datos}
+Para acceder a los datos después de ser almacenados y realizar un procesamiento, se extraen utilizando InsecureClient(hdfs-url), que establece la conexión con el servidor HDFS. El análisis se visualizará apoyándonos en Streamlit, una biblioteca de Python que nos proporciona una función decoradora que almacena la información en caché, permitiendo actualizarla periódicamente y seguir extrayendo datos de manera eficiente. Después de extraer los archivos JSON del servidor, se unifican todos en un DataFrame de pandas, ya que el análisis posterior no es tan complicado ni requiere mucho procesamiento. Para uno de los análisis, fue necesario estandarizar los datos y eliminar de la base de datos todas las filas con valores faltantes. Además, se convierten las columnas numéricas al formato adecuado.
+
+\section{Análisis de los Datos}
+	En el análisis financiero de IBM, el usuario puede seleccionar el tipo de opción (\textit{put} o \textit{call}). Para ayudar a identificar tendencias y momentos de compra o venta, se puede utilizar un gráfico de líneas donde se selecciona la métrica a visualizar. Una vez seleccionada esta métrica, se muestra su distribución mediante un histograma, lo que puede revelar sesgos u outliers. Además, un gráfico de barras compara el volumen y el interés abierto (\textit{open interest}) entre opciones \textit{call} y \textit{put}. El volumen indica la actividad y las expectativas del mercado, mientras que el interés abierto muestra la liquidez de las opciones. La aplicación incluye un modelo de Random Forest Regressor para predecir el precio de una opción (\textit{last}) basado en factores clave (como el strike, la implied volatility, etc.). Para evaluar la efectividad del modelo, se utiliza un gráfico de dispersión que visualiza si el modelo se ajusta a los datos reales. A continuación, se presenta un gráfico de barras que muestra qué características tienen el mayor impacto en las predicciones del modelo, lo que permite determinar cuáles son los factores clave.
 	\section{Referencias}
 	
 	\begin{flushleft}
