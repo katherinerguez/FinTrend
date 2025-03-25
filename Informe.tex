@@ -26,9 +26,11 @@
 	
 	\begin{center}
 		\textbf{Proyecto 2:} Análisis Histórico de Datos Financieros\\
+       
 	\tableofcontents
+     \end{center}
     \section{Introducción}
-\end{center}
+
     \begin{flushleft}
     	El análisis de datos es una disciplina que ha experimentado un notable crecimiento en todos los campos, así como en organizaciones y empresas, debido a la necesidad de contar con herramientas que analicen datos y que estos sirvan para la toma de decisiones eficaces y eficientes.  \\
     	Los datos han crecido de manera exponencial en las últimas décadas, lo que ha generado una serie de problemas, como el acceso a esa cantidad de datos, su extracción y almacenamiento. Por lo tanto, se introduce aquí la definición de \textit{Big Data}. \\
@@ -42,7 +44,8 @@
    \begin{flushleft}
    	 Para realizar la extracción de datos históricos sobre finanzas, se utiliza la API Alpha Vantage. Esta API devuelve la cadena de opciones histórica completa para un símbolo específico en una fecha determinada, abarcando más de 15 años de historia. También proporciona la volatilidad implícita (IV) y los griegos comunes (por ejemplo, delta, gamma, theta, vega y rho). Las cadenas de opciones se ordenan por fechas de vencimiento en orden cronológico. Dentro de la misma fecha de vencimiento, los contratos se organizan por precios de ejercicio de menor a mayor.\\
    	 \vspace{0.5cm}
-   	 \textbf{.}La volatilidad implícita es una medida de la expectativa del mercado derivada de su precio.\\
+   	 \textbf{.}La volatilidad implícita es una medida de la expectativa del mercado derivada de su precio. Se muestra  el número total de contratos de opciones que están actualmente abiertos y no han sido ejercidos ni cerrados,  el número total de contratos negociados durante un período específico. Un volumen más alto puede indicar mayor interés en la opción, el último precio al que se negoció el contrato de opción, el precio marcado o estimado del contrato, que puede ser utilizado como referencia para evaluar su valor actual y el precio más alto que un comprador está dispuesto a pagar por el contrato..
+\\
    	  \textbf{.}Los "griegos" son medidas que describen cómo se espera que los precios de las opciones respondan a diferentes factores del mercado:\\
    	 \vspace{0.5cm}
    	 \setlength{\parindent}{1.5cm}
@@ -122,8 +125,7 @@ def save_data(data, timestamp):
 	console.print(f"[yellow]Archivo guardado localmente: {filename}[/yellow]")
 	return "Local", filename
 		\end{lstlisting}
-		
-		\begin{figure}[h]
+	\begin{figure}[h]
 			\centering
 			\includegraphics[width=12cm]{./hdfs}
 			\caption{Esta imagen muestra toda la data almacenada en HDFS.}
@@ -135,9 +137,11 @@ def save_data(data, timestamp):
 		\caption{Esta imagen muestra en consola que la data se guardó correctamente.}
 		\label{fig:mi_imagen}
 	\end{figure}
-	
+	\vspace{1cm}
 	\section{Procesamiento de los Datos}
-Para acceder a los datos después de ser almacenados y realizar un procesamiento, se extraen utilizando InsecureClient(hdfs-url), que establece la conexión con el servidor HDFS. El análisis se visualizará apoyándonos en Streamlit, una biblioteca de Python que nos proporciona una función decoradora que almacena la información en caché, permitiendo actualizarla periódicamente y seguir extrayendo datos de manera eficiente. Después de extraer los archivos JSON del servidor, se unifican todos en un DataFrame de pandas, ya que el análisis posterior no es tan complicado ni requiere mucho procesamiento. Para uno de los análisis, fue necesario estandarizar los datos y eliminar de la base de datos todas las filas con valores faltantes. Además, se convierten las columnas numéricas al formato adecuado.
+Para acceder a los datos después de ser almacenados y realizar un procesamiento, se extraen utilizando InsecureClient(hdfs-url), que establece la conexión con el servidor HDFS. El análisis se visualizará apoyándonos en Streamlit, una biblioteca de Python. Después de extraer los archivos JSON del servidor, se unifican todos en un DataFrame de Dask, que admite la computación paralela. Cuando el conjunto de datos no "cabe en la memoria", Dask extiende el conjunto de datos para que "quepa en el disco". Dask nos permite escalar fácilmente a clústeres o reducir a una sola máquina en función del tamaño del conjunto de datos.
+
+Para uno de los análisis, fue necesario estandarizar los datos y eliminar de la base de datos todas las filas con valores faltantes. Además, se convierten las columnas numéricas al formato adecuado.
 
 \section{Análisis de los Datos}
 	En el análisis financiero de IBM, el usuario puede seleccionar el tipo de opción (\textit{put} o \textit{call}). Para ayudar a identificar tendencias y momentos de compra o venta, se puede utilizar un gráfico de líneas donde se selecciona la métrica a visualizar. Una vez seleccionada esta métrica, se muestra su distribución mediante un histograma, lo que puede revelar sesgos u outliers. Además, un gráfico de barras compara el volumen y el interés abierto (\textit{open interest}) entre opciones \textit{call} y \textit{put}. El volumen indica la actividad y las expectativas del mercado, mientras que el interés abierto muestra la liquidez de las opciones. La aplicación incluye un modelo de Random Forest Regressor para predecir el precio de una opción (\textit{last}) basado en factores clave (como el strike, la implied volatility, etc.). Para evaluar la efectividad del modelo, se utiliza un gráfico de dispersión que visualiza si el modelo se ajusta a los datos reales. A continuación, se presenta un gráfico de barras que muestra qué características tienen el mayor impacto en las predicciones del modelo, lo que permite determinar cuáles son los factores clave.
